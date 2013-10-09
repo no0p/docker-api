@@ -123,6 +123,10 @@ class Docker::Container
   def path_for(resource)
     "/containers/#{self.id}/#{resource}"
   end
+  
+  def self.list(opts = {}, conn = Docker.connection)
+    hashes = Docker::Util.parse_json(conn.get('/containers/json', opts)) || []
+  end
 
   private :path_for
   private_class_method :new

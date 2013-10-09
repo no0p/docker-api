@@ -148,6 +148,16 @@ class Docker::Image
       tar.close unless tar.nil?
     end
   end
+  
+  def self.list(opts = {}, conn = Docker.connection)
+    Docker::Util.parse_json(conn.get('/images/json', opts)) || []
+  end
+  
+  def self.run(cmd = nil)
+    cmd = cmd.split(/\s+/) if cmd.is_a?(String)
+    Docker::Container.create({ 'Image' => self.id, 'Cmd' => cmd }, connection)
+                     .tap(&:start!)
+  end
 
   private
 

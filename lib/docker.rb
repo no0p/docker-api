@@ -53,6 +53,25 @@ module Docker
     connection.post(:path => '/auth', :body => @creds)
     true
   end
+  
+  def self.image_by_repository(repository)
+    Docker::Image.list.select {|i| i["Repository"] == repository}.first
+  end
+  
+  def self.launch_repo(repository, cmd = nil)
+    Docker::Image.new(Docker.connection, image_by_repository(repository)["Id"]).run(cmd)
+  end
+  
+  def self.resolve_port(container_id, port)
+    port_links = Docker::Container.list.select {|i| i["Id"].match(/#{container_id}/)}.first["Ports"].split(", ").map {|i| i.split("->")}
+    link = port_links.detect {|i| i.last == port.to_s}
+    return nil unless link.present?
+    return link.first
+  end 
+  
+  def self.delete_containers
+    Docker::Container.all.each {|i| i.delete}
+  end
 
   # When the correct version of Docker is installed, returns true. Otherwise,
   # raises a VersionError.
