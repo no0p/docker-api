@@ -153,9 +153,9 @@ class Docker::Image
     Docker::Util.parse_json(conn.get('/images/json', opts)) || []
   end
   
-  def self.run(cmd = nil)
+  def self.run(cmd = nil, ports = nil)
     cmd = cmd.split(/\s+/) if cmd.is_a?(String)
-    Docker::Container.create({ 'Image' => self.id, 'Cmd' => cmd }, connection)
+    Docker::Container.create({ 'Image' => self.id, 'Cmd' => cmd, 'PortSpecs' => ports }, connection)
                      .tap(&:start!)
   end
 
