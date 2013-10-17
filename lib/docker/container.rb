@@ -48,6 +48,10 @@ class Docker::Container
     self
   end
 
+  def insp
+    connection.get(path_for(:json), {})
+  end
+
   # Attach to a container's standard streams / logs.
   def attach(options = {}, &block)
     opts = { :stream => true, :stdout => true }.merge(options)
