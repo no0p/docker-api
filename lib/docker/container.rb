@@ -49,7 +49,7 @@ class Docker::Container
   end
 
   def insp
-    connection.get(path_for(:json), {})
+    Docker::Util.parse_json connection.get(path_for(:json), {})
   end
 
   # Attach to a container's standard streams / logs.
